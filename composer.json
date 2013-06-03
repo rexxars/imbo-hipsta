@@ -1,0 +1,27 @@
+{
+  "name": "rexxars/imbo-hipsta",
+  "type": "library",
+  "description": "Imbo transformations for generating Instagram / Hipstamatic-like images",
+  "keywords": [ "image transformation", "hipster" ],
+  "homepage": "https://github.com/rexxars/imbo-hipsta",
+  "license": "MIT",
+  "authors": [{
+      "name": "Espen Hovlandsdal",
+      "email": "espen@hovlandsdal.com",
+      "role": "Project lead",
+      "homepage": "http://rexxars.com"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/rexxars/imbo-hipsta",
+    "irc": "irc://irc.freenode.net/imbo"
+  },
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "psr-0": {
+      "ImboHipsta": "library"
+    }
+  }
+}
