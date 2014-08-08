@@ -2,7 +2,7 @@
   "name": "rexxars/imbo-hipsta",
   "type": "library",
   "description": "Imbo transformations for generating Instagram / Hipstamatic-like images",
-  "keywords": [ "image transformation", "hipster" ],
+  "keywords": [ "image transformation", "hipster", "hipstamatic", "Instagram", "transformations" ],
   "homepage": "https://github.com/rexxars/imbo-hipsta",
   "license": "MIT",
   "authors": [{
