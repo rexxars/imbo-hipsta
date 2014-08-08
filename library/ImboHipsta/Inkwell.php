@@ -10,9 +10,10 @@
 
 namespace ImboHipsta;
 
-use Imbo\Model\Image,
+use Imbo\Image\Transformation\Transformation,
     Imbo\Exception\TransformationException,
-    Imbo\Image\Transformation\TransformationInterface,
+    Imbo\EventListener\ListenerInterface,
+    Imbo\EventManager\EventInterface,
     Imagick,
     ImagickException;
 
@@ -21,26 +22,32 @@ use Imbo\Model\Image,
  *
  * @author Espen Hovlandsdal <espen@hovlandsdal.com>
  */
-class Inkwell extends Transformation implements TransformationInterface {
+class Inkwell extends Transformation implements ListenerInterface {
     /**
      * {@inheritdoc}
      */
-    public function applyToImage(Image $image) {
-        try {
-            $imagick = $this->getImagick();
-            $imagick->readImageBlob($image->getBlob());
+    public static function getSubscribedEvents() {
+        return array(
+            'image.transformation.inkwell' => 'transform',
+        );
+    }
 
-            $imagick->modulateImage(100, 0, 100);
+    /**
+     * {@inheritdoc}
+     */
+    public function transform(EventInterface $event) {
+        try {
+            $this->imagick->modulateImage(100, 0, 100);
 
             $overlay = new Imagick();
             $overlay->newPseudoImage(1, 1000, 'gradient:');
             $overlay->rotateImage('#fff', 90);
             $overlay->sigmoidalContrastImage(true, 1.6, 50);
-            $overlay->sigmoidalContrastImage(false, 0.333333333, 0);
+            $overlay->sigmoidalContrastImage(false, 1 / 3, 0);
 
-            $imagick->clutImage($overlay);
+            $this->imagick->clutImage($overlay);
 
-            $image->setBlob($imagick->getImageBlob());
+            $event->getArgument('image')->hasBeenTransformed(true);
         } catch (ImagickException $e) {
             throw new TransformationException($e->getMessage(), 400, $e);
         }

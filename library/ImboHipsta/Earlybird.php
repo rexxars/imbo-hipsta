@@ -10,9 +10,10 @@
 
 namespace ImboHipsta;
 
-use Imbo\Model\Image,
+use Imbo\Image\Transformation\Transformation,
     Imbo\Exception\TransformationException,
-    Imbo\Image\Transformation\TransformationInterface,
+    Imbo\EventListener\ListenerInterface,
+    Imbo\EventManager\EventInterface,
     Imagick,
     ImagickException;
 
@@ -21,25 +22,31 @@ use Imbo\Model\Image,
  *
  * @author Espen Hovlandsdal <espen@hovlandsdal.com>
  */
-class Earlybird extends Transformation implements TransformationInterface {
+class Earlybird extends Transformation implements ListenerInterface {
     /**
      * {@inheritdoc}
      */
-    public function applyToImage(Image $image) {
+    public static function getSubscribedEvents() {
+        return array(
+            'image.transformation.earlybird' => 'transform',
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function transform(EventInterface $event) {
         try {
-            $imagick = $this->getImagick();
-            $imagick->readImageBlob($image->getBlob());
+            $this->imagick->modulateImage(100, 68, 101);
+            $this->imagick->gammaImage(1.19);
 
-            $imagick->modulateImage(100, 68, 101);
-            $imagick->gammaImage(1.19);
-
-            $range      = $imagick->getQuantumRange()['quantumRangeLong'];
+            $range      = $this->imagick->getQuantumRange()['quantumRangeLong'];
             $blackPoint = 0 - round((27 / 255) * $range);
 
-            $imagick->levelImage(0, 1, $range, Imagick::CHANNEL_RED);
-            $imagick->levelImage($blackPoint, 1, $range, Imagick::CHANNEL_RED);
+            $this->imagick->levelImage(0, 1, $range, Imagick::CHANNEL_RED);
+            $this->imagick->levelImage($blackPoint, 1, $range, Imagick::CHANNEL_RED);
 
-            $image->setBlob($imagick->getImageBlob());
+            $event->getArgument('image')->hasBeenTransformed(true);
         } catch (ImagickException $e) {
             throw new TransformationException($e->getMessage(), 400, $e);
         }
