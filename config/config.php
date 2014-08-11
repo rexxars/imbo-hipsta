@@ -4,5 +4,6 @@ return array(
         // Image transformations
         'earlybird' => 'ImboHipsta\Earlybird',
         'inkwell' => 'ImboHipsta\Inkwell',
+        'vintage' => 'ImboHipsta\Vintage',
     ),
 );
